@@ -17,7 +17,7 @@ const Flex = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault();                                                         //create an array of boxes with the length of boxNo value
     const newBoxes = Array.from({ length: Number(formData.boxNo) }, (_, i) => ({ //_ is a placeholder for unused parameters
       id: i + 1, //  from 1
       color: "gray", //default color
