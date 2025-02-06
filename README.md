@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+import React, { useState } from "react";
 
-## Getting Started
+const Flex = () => {
+  const [formData, setFormData] = useState({
+    index: "",
+    randomName: "",
+    colorName: "",
+    boxNo: 0,
+  });
 
-First, run the development server:
+  const [boxes, setBoxes] = useState([]);
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newBoxes = Array.from({ length: Number(formData.boxNo) }, (_, i) => ({
+      id: i,
+      color: "gray", //default color
+      text: `Box ${i + 1}`,
+    }));
+    setBoxes(newBoxes);
+  };
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    const index = Number(formData.index);
+    if (index >= 0 && index < boxes.length) {
+      const updatedBoxes = [...boxes];
+      updatedBoxes[index] = {
+        ...updatedBoxes[index],
+        color: formData.colorName || updatedBoxes[index].color,
+        text: formData.randomName || updatedBoxes[index].text,
+      };
+      setBoxes(updatedBoxes);
+    }
+  };
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  return (
+    <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
+      {/* left side */}
+      <div
+        style={{ width: "20%", padding: "10px", borderRight: "2px solid #ccc" }}
+      >
+        <h3>Enter Details</h3>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Index:</label>
+            <input
+              type="text"
+              name="index"
+              value={formData.index}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label>Random Name:</label>
+            <input
+              type="text"
+              name="randomName"
+              value={formData.randomName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label>Color Name:</label>
+            <input
+              type="text"
+              name="colorName"
+              value={formData.colorName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label>Box No:</label>
+            <input
+              type="number"
+              name="boxNo"
+              value={formData.boxNo}
+              onChange={handleChange}
+            />
+          </div>
+          <button type="submit">Generate Boxes</button>
+        </form>
+        <button onClick={handleUpdate} style={{ marginTop: "10px" }}>
+          Update Box
+        </button>
+      </div>
 
-## Learn More
+      {/* // Right Side Boxes */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "2px",
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {boxes.map((box) => (
+          <div
+            key={box.id}
+            style={{
+              backgroundColor: box.color,
+              color: "white",
+              textAlign: "center",
+              borderRadius: "5px",
+              minWidth: "300px",
+              minHeight: "300px",
+              flex: "1 1 100px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {box.text} ({box.id + 1})
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+export default Flex;
